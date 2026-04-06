@@ -36,7 +36,7 @@ const Navbar = () => {
     { label: t("வாக்குறுதிகள்", "Promises"), href: "#promises" },
     { label: t("துறைவாரி", "Categories"), href: "#categories" },
     { label: t("வேட்பாளர்கள்", "Candidates"), href: "/candidates" },
-    { label: "Vidiyaa DMK Aatchi", href: "/dmk-criticism" },
+    { label: t("DMK கிரிடிசம்", "DMK Criticism"), href: "/dmk-criticism" },
   ];
 
   useEffect(() => {
