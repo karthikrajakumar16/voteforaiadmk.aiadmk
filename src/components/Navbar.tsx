@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link, useLocation } from "react-router-dom";
 
 const navLinks = [
   { label: "முகப்பு", href: "#hero" },
   { label: "வாக்குறுதிகள்", href: "#promises" },
   { label: "துறைவாரி", href: "#categories" },
-  { label: "வேட்பாளர்கள்", href: "#candidates" },
+  { label: "வேட்பாளர்கள்", href: "/candidates" },
 ];
 
 const Navbar = () => {
@@ -34,15 +35,25 @@ const Navbar = () => {
         </a>
 
         <div className="hidden md:flex items-center gap-6">
-          {navLinks.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors"
-            >
-              {l.label}
-            </a>
-          ))}
+          {navLinks.map((l) =>
+            l.href.startsWith("/") ? (
+              <Link
+                key={l.href}
+                to={l.href}
+                className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors"
+              >
+                {l.label}
+              </Link>
+            ) : (
+              <a
+                key={l.href}
+                href={l.href}
+                className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors"
+              >
+                {l.label}
+              </a>
+            )
+          )}
           <a
             href="#download"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
@@ -69,16 +80,27 @@ const Navbar = () => {
             className="md:hidden bg-background border-b border-border overflow-hidden"
           >
             <div className="container py-4 flex flex-col gap-3">
-              {navLinks.map((l) => (
-                <a
-                  key={l.href}
-                  href={l.href}
-                  className="text-sm font-medium py-2 text-foreground/70 hover:text-primary"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {l.label}
-                </a>
-              ))}
+              {navLinks.map((l) =>
+                l.href.startsWith("/") ? (
+                  <Link
+                    key={l.href}
+                    to={l.href}
+                    className="text-sm font-medium py-2 text-foreground/70 hover:text-primary"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {l.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={l.href}
+                    href={l.href}
+                    className="text-sm font-medium py-2 text-foreground/70 hover:text-primary"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {l.label}
+                  </a>
+                )
+              )}
               <a
                 href="#download"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold w-fit"
