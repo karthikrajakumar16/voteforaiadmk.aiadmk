@@ -54,6 +54,8 @@ const HeroSection = () => {
           transition={{ duration: 0.7 }}
           className="space-y-6 max-w-3xl mx-auto"
         >
+          <img src={aiadmkLogo} alt="AIADMK Logo" className="w-32 h-20 object-contain mx-auto" />
+
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-sm font-medium text-primary">
             {t("சட்டப்பேரவைத் தேர்தல் அதிமுக அறிக்கை - 2026", "AIADMK Assembly Election Manifesto - 2026")}
           </div>
