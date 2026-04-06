@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Search, ArrowLeft, Users, MapPin, Building2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { candidates } from "@/data/candidates";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const ITEMS_PER_PAGE = 30;
 
@@ -10,11 +11,11 @@ const CandidatesPage = () => {
   const [search, setSearch] = useState("");
   const [district, setDistrict] = useState("");
   const [page, setPage] = useState(1);
+  const { t } = useLanguage();
 
   const districts = useMemo(() => [...new Set(candidates.map((c) => c.district))].sort(), []);
 
   const filtered = useMemo(() => {
-    setPage(1);
     return candidates.filter((c) => {
       const s = search.toLowerCase();
       const matchSearch =
@@ -26,6 +27,11 @@ const CandidatesPage = () => {
       const matchDistrict = !district || c.district === district;
       return matchSearch && matchDistrict;
     });
+  }, [search, district]);
+
+  // Reset page when filters change
+  useMemo(() => {
+    setPage(1);
   }, [search, district]);
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
@@ -41,7 +47,6 @@ const CandidatesPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <div className="bg-primary text-primary-foreground">
         <div className="container py-6">
           <Link
@@ -49,50 +54,48 @@ const CandidatesPage = () => {
             className="inline-flex items-center gap-2 text-sm text-primary-foreground/80 hover:text-primary-foreground mb-4 transition-colors"
           >
             <ArrowLeft size={16} />
-            முகப்பு பக்கம்
+            {t("முகப்பு பக்கம்", "Back to Home")}
           </Link>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
             <h1 className="text-3xl md:text-4xl font-black mb-2">
-              AIADMK வேட்பாளர் பட்டியல் 2026
+              {t("AIADMK வேட்பாளர் பட்டியல் 2026", "AIADMK Candidate List 2026")}
             </h1>
             <p className="text-primary-foreground/80 text-lg">
-              அனைத்து 234 சட்டமன்றத் தொகுதிகளுக்கான வேட்பாளர்கள்
+              {t("அனைத்து சட்டமன்றத் தொகுதிகளுக்கான வேட்பாளர்கள்", "Candidates for all assembly constituencies")}
             </p>
           </motion.div>
 
-          {/* Stats */}
           <div className="flex flex-wrap gap-4 mt-6">
             <div className="flex items-center gap-2 bg-primary-foreground/10 rounded-lg px-4 py-2">
               <Users size={18} />
               <span className="font-bold">{candidates.length}</span>
-              <span className="text-sm text-primary-foreground/80">வேட்பாளர்கள்</span>
+              <span className="text-sm text-primary-foreground/80">{t("வேட்பாளர்கள்", "Candidates")}</span>
             </div>
             <div className="flex items-center gap-2 bg-primary-foreground/10 rounded-lg px-4 py-2">
               <MapPin size={18} />
               <span className="font-bold">{districts.length}</span>
-              <span className="text-sm text-primary-foreground/80">மாவட்டங்கள்</span>
+              <span className="text-sm text-primary-foreground/80">{t("மாவட்டங்கள்", "Districts")}</span>
             </div>
             <div className="flex items-center gap-2 bg-primary-foreground/10 rounded-lg px-4 py-2">
               <Building2 size={18} />
-              <span className="font-bold">234</span>
-              <span className="text-sm text-primary-foreground/80">தொகுதிகள்</span>
+              <span className="font-bold">{candidates.length}</span>
+              <span className="text-sm text-primary-foreground/80">{t("தொகுதிகள்", "Constituencies")}</span>
             </div>
           </div>
         </div>
       </div>
 
       <div className="container py-8">
-        {/* Filters */}
         <div className="sticky top-0 z-40 bg-background py-4 -mx-4 px-4 border-b border-border mb-6">
           <div className="flex flex-col sm:flex-row gap-3 max-w-4xl">
             <div className="relative flex-1">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="பெயர், தொகுதி, மாவட்டம் தேடுங்கள்..."
+                placeholder={t("பெயர், தொகுதி, மாவட்டம் தேடுங்கள்...", "Search by name, constituency, district...")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
@@ -103,7 +106,7 @@ const CandidatesPage = () => {
               onChange={(e) => setDistrict(e.target.value)}
               className="px-4 py-2.5 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 min-w-[200px]"
             >
-              <option value="">அனைத்து மாவட்டங்கள் ({districts.length})</option>
+              <option value="">{t(`அனைத்து மாவட்டங்கள் (${districts.length})`, `All Districts (${districts.length})`)}</option>
               {districts.map((d) => (
                 <option key={d} value={d}>
                   {d} ({districtCounts[d]})
@@ -112,7 +115,7 @@ const CandidatesPage = () => {
             </select>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            {filtered.length} வேட்பாளர்கள் காட்டப்படுகின்றனர்
+            {filtered.length} {t("வேட்பாளர்கள் காட்டப்படுகின்றனர்", "candidates shown")}
           </p>
         </div>
 
@@ -122,10 +125,10 @@ const CandidatesPage = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-primary text-primary-foreground">
-                  <th className="text-left p-3 font-semibold w-16">எண்</th>
-                  <th className="text-left p-3 font-semibold">மாவட்டம்</th>
-                  <th className="text-left p-3 font-semibold">வேட்பாளர் பெயர்</th>
-                  <th className="text-left p-3 font-semibold">சட்டமன்ற தொகுதி</th>
+                  <th className="text-left p-3 font-semibold w-16">{t("எண்", "No.")}</th>
+                  <th className="text-left p-3 font-semibold">{t("மாவட்டம்", "District")}</th>
+                  <th className="text-left p-3 font-semibold">{t("வேட்பாளர் பெயர்", "Candidate Name")}</th>
+                  <th className="text-left p-3 font-semibold">{t("சட்டமன்ற தொகுதி", "Constituency")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -163,7 +166,7 @@ const CandidatesPage = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.02 }}
-              className="border border-border rounded-xl p-4 bg-background hover:shadow-md transition-shadow"
+              className="border border-border rounded-xl p-4 bg-background hover:shadow-md hover:scale-[1.02] transition-all duration-300"
             >
               <div className="flex items-center gap-3 mb-2">
                 <span className="w-9 h-9 rounded-full bg-primary/10 text-primary text-xs font-black flex items-center justify-center shrink-0">
@@ -191,7 +194,7 @@ const CandidatesPage = () => {
               disabled={page === 1}
               className="px-4 py-2 rounded-lg border border-border text-sm font-medium disabled:opacity-40 hover:bg-primary/5 transition-colors"
             >
-              முந்தைய
+              {t("முந்தைய", "Previous")}
             </button>
             <div className="flex items-center gap-1">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
@@ -213,7 +216,7 @@ const CandidatesPage = () => {
               disabled={page === totalPages}
               className="px-4 py-2 rounded-lg border border-border text-sm font-medium disabled:opacity-40 hover:bg-primary/5 transition-colors"
             >
-              அடுத்த
+              {t("அடுத்த", "Next")}
             </button>
           </div>
         )}
@@ -221,8 +224,8 @@ const CandidatesPage = () => {
         {filtered.length === 0 && (
           <div className="text-center py-16">
             <Users size={48} className="mx-auto text-muted-foreground/40 mb-4" />
-            <p className="text-muted-foreground text-lg">தேடல் முடிவுகள் இல்லை</p>
-            <p className="text-muted-foreground/60 text-sm mt-1">வேறு தேடல் சொல்லை முயற்சிக்கவும்</p>
+            <p className="text-muted-foreground text-lg">{t("தேடல் முடிவுகள் இல்லை", "No results found")}</p>
+            <p className="text-muted-foreground/60 text-sm mt-1">{t("வேறு தேடல் சொல்லை முயற்சிக்கவும்", "Try a different search term")}</p>
           </div>
         )}
       </div>
