@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, FileDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import aiadmkLogo from "@/assets/aiadmk-logo.png";
 
 const CountUp = ({ target, duration = 2000 }: { target: number; duration?: number }) => {
   const [count, setCount] = useState(0);
