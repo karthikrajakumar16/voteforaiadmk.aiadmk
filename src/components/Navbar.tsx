@@ -80,16 +80,27 @@ const Navbar = () => {
             className="md:hidden bg-background border-b border-border overflow-hidden"
           >
             <div className="container py-4 flex flex-col gap-3">
-              {navLinks.map((l) => (
-                <a
-                  key={l.href}
-                  href={l.href}
-                  className="text-sm font-medium py-2 text-foreground/70 hover:text-primary"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {l.label}
-                </a>
-              ))}
+              {navLinks.map((l) =>
+                l.href.startsWith("/") ? (
+                  <Link
+                    key={l.href}
+                    to={l.href}
+                    className="text-sm font-medium py-2 text-foreground/70 hover:text-primary"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {l.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={l.href}
+                    href={l.href}
+                    className="text-sm font-medium py-2 text-foreground/70 hover:text-primary"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {l.label}
+                  </a>
+                )
+              )}
               <a
                 href="#download"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold w-fit"
