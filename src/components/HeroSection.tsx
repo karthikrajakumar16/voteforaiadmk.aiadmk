@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { ChevronDown, FileDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import aiadmkLogo from "@/assets/aiadmk-logo.png";
+import tamilManifestoPDF from "@/assets/admk manifesto 2026 ...tamil.pdf";
+import englishManifestoPDF from "@/assets/admk manifesto 2026 ... ENGLISH....pdf";
 
 const CountUp = ({ target, duration = 2000 }: { target: number; duration?: number }) => {
   const [count, setCount] = useState(0);
@@ -33,7 +35,12 @@ const CountUp = ({ target, duration = 2000 }: { target: number; duration?: numbe
 };
 
 const HeroSection = () => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+
+  const handleDownloadPDF = () => {
+    const manifestoPDF = lang === "ta" ? tamilManifestoPDF : englishManifestoPDF;
+    window.open(manifestoPDF, "_blank");
+  };
 
   return (
     <section
@@ -123,8 +130,8 @@ const HeroSection = () => {
               {t("வாக்குறுதிகளைப் படிக்க…", "Read the Promises…")}
               <ChevronDown size={18} />
             </motion.a>
-            <motion.a
-              href="#download"
+            <motion.button
+              onClick={handleDownloadPDF}
               whileHover={{ y: -2, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               transition={{ duration: 0.2 }}
@@ -132,7 +139,7 @@ const HeroSection = () => {
             >
               <FileDown size={18} />
               {t("PDF பதிவிறக்கம்", "Download PDF")}
-            </motion.a>
+            </motion.button>
           </div>
         </motion.div>
       </div>

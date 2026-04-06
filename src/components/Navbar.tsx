@@ -4,17 +4,39 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import aiadmkLogo from "@/assets/aiadmk-logo.png";
+import tamilManifestoPDF from "@/assets/admk manifesto 2026 ...tamil.pdf";
+import englishManifestoPDF from "@/assets/admk manifesto 2026 ... ENGLISH....pdf";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [downloadCount, setDownloadCount] = useState(9422);
   const { lang, toggleLang, t } = useLanguage();
+
+  useEffect(() => {
+    // Load download count from localStorage
+    const savedCount = localStorage.getItem("manifestoDownloadCount");
+    if (savedCount) {
+      setDownloadCount(parseInt(savedCount, 10));
+    }
+  }, []);
+
+  const handleDownloadPDF = () => {
+    const manifestoPDF = lang === "ta" ? tamilManifestoPDF : englishManifestoPDF;
+    window.open(manifestoPDF, "_blank");
+    
+    // Increment and save download count
+    const newCount = downloadCount + 1;
+    setDownloadCount(newCount);
+    localStorage.setItem("manifestoDownloadCount", newCount.toString());
+  };
 
   const navLinks = [
     { label: t("முகப்பு", "Home"), href: "#hero" },
     { label: t("வாக்குறுதிகள்", "Promises"), href: "#promises" },
     { label: t("துறைவாரி", "Categories"), href: "#categories" },
     { label: t("வேட்பாளர்கள்", "Candidates"), href: "/candidates" },
+    { label: "Vidiyaa DMK Aatchi", href: "/dmk-criticism" },
   ];
 
   useEffect(() => {
@@ -67,13 +89,25 @@ const Navbar = () => {
             {lang === "ta" ? "EN" : "தமிழ்"}
           </button>
 
-          <a
-            href="#download"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
-          >
-            <Download size={16} />
-            {t("PDF பதிவிறக்கம்", "Download PDF")}
-          </a>
+          {/* Download Button with Count Badge */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleDownloadPDF}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
+            >
+              <Download size={16} />
+              {t("PDF பதிவிறக்கம்", "Download PDF")}
+            </button>
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-primary text-sm font-bold inline-flex items-center gap-1">
+                <Download size={14} />
+                {downloadCount.toLocaleString('en-IN')}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                {t("பேர் பதிவிறக்கம் செய்தனர்", "People Downloaded")}
+              </span>
+            </div>
+          </div>
         </div>
 
         <div className="flex items-center gap-2 md:hidden">
@@ -123,14 +157,27 @@ const Navbar = () => {
                   </a>
                 )
               )}
-              <a
-                href="#download"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold w-fit"
-                onClick={() => setMobileOpen(false)}
-              >
-                <Download size={16} />
-                {t("PDF பதிவிறக்கம்", "Download PDF")}
-              </a>
+              <div className="flex flex-col gap-2 pt-2">
+                <button
+                  onClick={() => {
+                    handleDownloadPDF();
+                    setMobileOpen(false);
+                  }}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold w-fit"
+                >
+                  <Download size={16} />
+                  {t("PDF பதிவிறக்கம்", "Download PDF")}
+                </button>
+                <div className="flex flex-col items-center gap-1">
+                  <span className="text-primary text-xs font-bold inline-flex items-center gap-1">
+                    <Download size={12} />
+                    {downloadCount.toLocaleString('en-IN')}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {t("பேர் பதிவிறக்கம் செய்தனர்", "People Downloaded")}
+                  </span>
+                </div>
+              </div>
             </div>
           </motion.div>
         )}

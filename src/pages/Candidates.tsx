@@ -1,9 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Search, ArrowLeft, Users, MapPin, Building2 } from "lucide-react";
+import { Search, ArrowLeft, Users, MapPin, Building2, FileDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { candidates } from "@/data/candidates";
 import { useLanguage } from "@/contexts/LanguageContext";
+import vetpalarPDF from "@/assets/ADMK VETPALAR BOOK A4.pdf";
 
 const ITEMS_PER_PAGE = 30;
 
@@ -12,6 +13,10 @@ const CandidatesPage = () => {
   const [district, setDistrict] = useState("");
   const [page, setPage] = useState(1);
   const { t } = useLanguage();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const districts = useMemo(() => [...new Set(candidates.map((c) => c.district))].sort(), []);
 
@@ -89,6 +94,28 @@ const CandidatesPage = () => {
       </div>
 
       <div className="container py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 bg-gradient-to-r from-primary/5 to-primary/10 rounded-2xl border border-primary/20 p-6 flex items-center justify-between flex-col sm:flex-row gap-4"
+        >
+          <div>
+            <h2 className="text-lg md:text-xl font-bold text-foreground mb-1">
+              {t("வேட்பாளர் பட்டியல் PDF ஐ பதிவிறக்குங்கள்", "Download Candidates List PDF")}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {t("AIADMK வேதாளர் புத்தகம் - முழுமையான வேட்பாளர் விபரங்கள்", "ADMK Vetpalar Book - Complete candidate details")}
+            </p>
+          </div>
+          <button
+            onClick={() => window.open(vetpalarPDF, "_blank")}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all hover:shadow-lg hover:shadow-primary/20 whitespace-nowrap"
+          >
+            <FileDown size={18} />
+            {t("PDF பதிவிறக்கம்", "Download PDF")}
+          </button>
+        </motion.div>
+
         <div className="sticky top-0 z-40 bg-background py-4 -mx-4 px-4 border-b border-border mb-6">
           <div className="flex flex-col sm:flex-row gap-3 max-w-4xl">
             <div className="relative flex-1">
