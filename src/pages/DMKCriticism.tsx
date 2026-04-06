@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FileDown, ArrowLeft } from "lucide-react";
+import { FileDown, ArrowLeft, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -43,11 +43,11 @@ const DMKCriticism = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="bg-primary text-primary-foreground">
+      <div style={{ backgroundColor: "#de0a26" }} className="text-white">
         <div className="container py-6">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-sm text-primary-foreground/80 hover:text-primary-foreground mb-4 transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-white/80 hover:text-white mb-4 transition-colors"
           >
             <ArrowLeft size={16} />
             {t("முகப்பு பக்கம்", "Back to Home")}
@@ -56,10 +56,13 @@ const DMKCriticism = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <h1 className="text-3xl md:text-4xl font-black mb-2">
-              {t("திமுக - புரிந்துணர்தல்", "DMK - Understanding")}
-            </h1>
-            <p className="text-primary-foreground/80 text-lg">
+            <div className="flex items-center gap-3 mb-2">
+              <AlertTriangle size={32} className="text-yellow-200" />
+              <h1 className="text-3xl md:text-4xl font-black">
+                {t("திமுக - புரிந்துணர்தல்", "DMK - Understanding")}
+              </h1>
+            </div>
+            <p className="text-white/80 text-lg">
               {t("பெயர்ப்பு மற்றும் வரலாற்று ஆவணங்கள்", "Documentary Evidence")}
             </p>
           </motion.div>
@@ -85,7 +88,8 @@ const DMKCriticism = () => {
               </p>
               <button
                 onClick={() => handleDownload(section.pdfName)}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all hover:shadow-lg hover:shadow-primary/20"
+                style={{ backgroundColor: "#de0a26" }}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold hover:opacity-90 transition-all hover:shadow-lg"
               >
                 <FileDown size={18} />
                 {t("PDF பதிவிறக்கம்", "Download PDF")}

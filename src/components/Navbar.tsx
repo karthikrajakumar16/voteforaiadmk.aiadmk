@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Download, Globe } from "lucide-react";
+import { Menu, X, Download, Globe, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -65,9 +65,25 @@ const Navbar = () => {
               <Link
                 key={l.href}
                 to={l.href}
-                className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors"
+                className={`text-sm font-medium transition-colors ${
+                  l.href === "/dmk-criticism"
+                    ? "font-bold"
+                    : "text-foreground/70 hover:text-primary"
+                }`}
               >
-                {l.label}
+                {l.href === "/dmk-criticism" ? (
+                  <motion.div
+                    animate={{ opacity: [1, 0.3, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="flex items-center justify-center gap-1.5"
+                    style={{ color: "#de0a26" }}
+                  >
+                    <AlertTriangle size={20} className="flex-shrink-0" />
+                    <span>{l.label}</span>
+                  </motion.div>
+                ) : (
+                  l.label
+                )}
               </Link>
             ) : (
               <a
@@ -141,16 +157,32 @@ const Navbar = () => {
                   <Link
                     key={l.href}
                     to={l.href}
-                    className="text-sm font-medium py-2 text-foreground/70 hover:text-primary"
+                    className={`text-sm font-medium py-2 transition-colors ${
+                      l.href === "/dmk-criticism"
+                        ? "font-bold"
+                        : "text-foreground/70 hover:text-primary"
+                    }`}
                     onClick={() => setMobileOpen(false)}
                   >
-                    {l.label}
+                    {l.href === "/dmk-criticism" ? (
+                      <motion.div
+                        animate={{ opacity: [1, 0.3, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="flex items-center justify-center gap-1.5"
+                        style={{ color: "#de0a26" }}
+                      >
+                        <AlertTriangle size={20} className="flex-shrink-0" />
+                        <span>{l.label}</span>
+                      </motion.div>
+                    ) : (
+                      l.label
+                    )}
                   </Link>
                 ) : (
                   <a
                     key={l.href}
                     href={l.href}
-                    className="text-sm font-medium py-2 text-foreground/70 hover:text-primary"
+                    className="text-sm font-medium py-2 text-foreground/70 hover:text-primary transition-colors"
                     onClick={() => setMobileOpen(false)}
                   >
                     {l.label}
