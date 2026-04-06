@@ -3,6 +3,7 @@ import { Menu, X, Download, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import aiadmkLogo from "@/assets/aiadmk-logo.png";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -32,7 +33,7 @@ const Navbar = () => {
     >
       <div className="container flex items-center justify-between h-16">
         <a href="#hero" className="flex items-center gap-2 font-bold text-lg text-primary">
-          <span className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-black">அ</span>
+          <img src={aiadmkLogo} alt="AIADMK Logo" className="w-10 h-7 object-contain" />
           <span className="hidden sm:inline">AIADMK 2026</span>
         </a>
 
