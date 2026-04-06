@@ -3,6 +3,7 @@ import { Menu, X, Download, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import aiadmkLogo from "@/assets/aiadmk-logo.png";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
