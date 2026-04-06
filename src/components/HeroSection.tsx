@@ -61,31 +61,43 @@ const HeroSection = () => {
           </div>
 
           <div className="flex items-center justify-center gap-6 md:gap-10">
-            <div className="bg-background border border-border rounded-2xl px-6 py-4 shadow-sm">
+            <motion.div
+              whileHover={{ y: -4, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.25 }}
+              className="bg-background border border-border rounded-2xl px-6 py-4 shadow-sm"
+            >
               <div className="text-3xl md:text-4xl font-black text-primary">
                 <CountUp target={31} />
               </div>
               <div className="text-xs md:text-sm text-muted-foreground font-medium mt-1">
                 {t("துறைகள்", "Sectors")}
               </div>
-            </div>
-            <div className="bg-background border border-border rounded-2xl px-6 py-4 shadow-sm">
+            </motion.div>
+            <motion.div
+              whileHover={{ y: -4, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.25 }}
+              className="bg-background border border-border rounded-2xl px-6 py-4 shadow-sm"
+            >
               <div className="text-3xl md:text-4xl font-black text-primary">
                 <CountUp target={297} />
               </div>
               <div className="text-xs md:text-sm text-muted-foreground font-medium mt-1">
                 {t("வாக்குறுதிகள்", "Promises")}
               </div>
-            </div>
+            </motion.div>
           </div>
 
           <p className="text-highlight font-bold text-base md:text-lg">
             {t("இது அஇஅதிமுக-வின் உறுதிமொழி!", "This is AIADMK's Promise!")}
           </p>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-foreground">
-            {t("மக்களைக் காப்போம் —", "Protect the People —")}{" "}
-            <span className="text-primary">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-black leading-tight text-foreground transition-transform duration-300 ease-out transform-gpu hover:scale-105 hover:-translate-y-1">
+            <span className="block mb-3">
+              {t("மக்களைக் காப்போம் —", "Protect the People —")}
+            </span>
+            <span className="text-primary block text-5xl sm:text-6xl md:text-5xl lg:text-5xl">
               {t("தமிழகத்தை மீட்போம்!", "Reclaim Tamil Nadu!")}
             </span>
           </h1>
@@ -101,20 +113,26 @@ const HeroSection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <a
+            <motion.a
               href="#promises"
+              whileHover={{ y: -2, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.2 }}
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-primary text-primary-foreground font-bold text-base hover:bg-primary/90 transition-all hover:shadow-lg hover:shadow-primary/20"
             >
               {t("வாக்குறுதிகளைப் படிக்க…", "Read the Promises…")}
               <ChevronDown size={18} />
-            </a>
-            <a
+            </motion.a>
+            <motion.a
               href="#download"
+              whileHover={{ y: -2, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.2 }}
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl border-2 border-primary text-primary font-bold text-base hover:bg-primary/5 transition-colors"
             >
               <FileDown size={18} />
               {t("PDF பதிவிறக்கம்", "Download PDF")}
-            </a>
+            </motion.a>
           </div>
         </motion.div>
       </div>

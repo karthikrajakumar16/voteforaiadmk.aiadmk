@@ -89,7 +89,7 @@ const SectorHighlights = () => {
           className="text-center mb-12"
         >
           <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-3">
-            {t("முக்கிய துறை Highlights", "Key Sector Highlights")}
+            {t("முக்கிய துறை", "Key Sectors")}
           </span>
           <h2 className="text-2xl md:text-3xl font-black text-foreground">
             {t("துறைவாரி", "Sector-wise")}{" "}
@@ -106,16 +106,18 @@ const SectorHighlights = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.06 }}
-                className="bg-background rounded-xl border border-border p-5 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 hover:scale-[1.03] transition-all duration-300"
+                whileHover={{ y: -5, scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.25, delay: i * 0.06 }}
+                className="group bg-background rounded-xl border border-border p-5 transition-all transform-gpu will-change-transform hover:shadow-xl hover:shadow-primary/20"
               >
-                <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-4">
+                <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-4 transition-colors duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
                   <Icon size={22} />
                 </div>
-                <h3 className="font-bold text-sm text-foreground mb-3">{s.name}</h3>
+                <h3 className="font-bold text-base text-foreground mb-3">{s.name}</h3>
                 <ul className="space-y-2">
                   {s.highlights.map((h, j) => (
-                    <li key={j} className="flex items-start gap-2 text-xs text-muted-foreground">
+                    <li key={j} className="flex items-start gap-2 text-base text-muted-foreground">
                       <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-primary mt-1.5" />
                       {h}
                     </li>

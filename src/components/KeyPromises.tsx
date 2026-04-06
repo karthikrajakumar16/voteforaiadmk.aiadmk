@@ -58,15 +58,15 @@ const KeyPromises = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.04 }}
-              className="group bg-background rounded-xl border border-border p-5 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 hover:scale-[1.03] transition-all duration-300"
+              className="group bg-background rounded-xl border border-border p-5 transition-all duration-300 transform-gpu will-change-transform hover:-translate-y-1 hover:scale-105 hover:shadow-xl hover:shadow-primary/20"
             >
               <div className="flex items-start gap-4">
                 <div className="shrink-0 w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                   <p.icon size={22} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-foreground text-sm leading-snug">{p.title}</h3>
-                  <p className="text-xs text-muted-foreground mt-1">{p.desc}</p>
+                  <h3 className="font-bold text-foreground text-base leading-snug">{p.title}</h3>
+                  <p className="text-sm text-muted-foreground mt-1">{p.desc}</p>
                 </div>
               </div>
             </motion.div>

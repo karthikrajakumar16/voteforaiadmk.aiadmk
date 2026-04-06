@@ -384,8 +384,10 @@ const CategoryPromises = () => {
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.02 }}
-                className="border border-border rounded-xl overflow-hidden bg-background hover:shadow-md transition-shadow"
+                whileHover={{ y: -3, scale: 1.003 }}
+                whileTap={{ scale: 0.995 }}
+                transition={{ duration: 0.2, delay: i * 0.02 }}
+                className="border border-border rounded-xl overflow-hidden bg-background transition-all duration-300 transform-gpu hover:-translate-y-1 hover:scale-[1.01] hover:shadow-lg hover:shadow-primary/10"
               >
                 <button
                   onClick={() => setOpen(isOpen ? null : i)}
@@ -412,12 +414,18 @@ const CategoryPromises = () => {
                     >
                       <div className="px-4 pb-4 grid gap-2">
                         {cat.promises.map((p, j) => (
-                          <div key={j} className="flex items-start gap-3 p-3 rounded-lg bg-surface">
-                            <span className="shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">
+                          <motion.div
+                            key={j}
+                            whileHover={{ y: -2, scale: 1.01 }}
+                            whileTap={{ scale: 0.99 }}
+                            transition={{ duration: 0.2 }}
+                            className="group flex items-start gap-3 p-3 rounded-lg bg-surface hover:bg-primary/5 transition-all duration-200"
+                          >
+                            <span className="shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5 transition-colors duration-200 group-hover:bg-primary group-hover:text-primary-foreground">
                               {j + 1}
                             </span>
-                            <span className="text-sm text-foreground/90">{p}</span>
-                          </div>
+                            <span className="text-sm text-foreground/90 transition-colors duration-200 group-hover:text-foreground">{p}</span>
+                          </motion.div>
                         ))}
                       </div>
                     </motion.div>
