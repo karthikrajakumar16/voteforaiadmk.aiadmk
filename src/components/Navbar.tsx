@@ -6,7 +6,7 @@ const navLinks = [
   { label: "முகப்பு", href: "#hero" },
   { label: "வாக்குறுதிகள்", href: "#promises" },
   { label: "துறைவாரி", href: "#categories" },
-  { label: "வேட்பாளர்கள்", href: "#candidates" },
+  { label: "வேட்பாளர்கள்", href: "/candidates" },
 ];
 
 const Navbar = () => {
