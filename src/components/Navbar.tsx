@@ -1,18 +1,20 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Download } from "lucide-react";
+import { Menu, X, Download, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-
-const navLinks = [
-  { label: "முகப்பு", href: "#hero" },
-  { label: "வாக்குறுதிகள்", href: "#promises" },
-  { label: "துறைவாரி", href: "#categories" },
-  { label: "வேட்பாளர்கள்", href: "/candidates" },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { lang, toggleLang, t } = useLanguage();
+
+  const navLinks = [
+    { label: t("முகப்பு", "Home"), href: "#hero" },
+    { label: t("வாக்குறுதிகள்", "Promises"), href: "#promises" },
+    { label: t("துறைவாரி", "Categories"), href: "#categories" },
+    { label: t("வேட்பாளர்கள்", "Candidates"), href: "/candidates" },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -54,21 +56,40 @@ const Navbar = () => {
               </a>
             )
           )}
+
+          {/* Language Toggle */}
+          <button
+            onClick={toggleLang}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-sm font-medium text-foreground/70 hover:text-primary hover:border-primary/30 transition-colors"
+          >
+            <Globe size={14} />
+            {lang === "ta" ? "EN" : "தமிழ்"}
+          </button>
+
           <a
             href="#download"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
           >
             <Download size={16} />
-            PDF பதிவிறக்கம்
+            {t("PDF பதிவிறக்கம்", "Download PDF")}
           </a>
         </div>
 
-        <button
-          className="md:hidden p-2 text-foreground"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          {/* Mobile Language Toggle */}
+          <button
+            onClick={toggleLang}
+            className="p-2 text-foreground/70 hover:text-primary transition-colors"
+          >
+            <Globe size={20} />
+          </button>
+          <button
+            className="p-2 text-foreground"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -107,7 +128,7 @@ const Navbar = () => {
                 onClick={() => setMobileOpen(false)}
               >
                 <Download size={16} />
-                PDF பதிவிறக்கம்
+                {t("PDF பதிவிறக்கம்", "Download PDF")}
               </a>
             </div>
           </motion.div>
