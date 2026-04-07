@@ -82,7 +82,7 @@ const Navbar = () => {
       <div className="container flex items-center justify-between h-16">
         <a href="#hero" className="flex items-center gap-2 font-bold text-lg text-primary">
           <img src={aiadmkLogo} alt="AIADMK Logo" className="w-10 h-7 object-contain" />
-          <span className="hidden sm:inline">AIADMK 2026</span>
+          <span className="hidden sm:inline text-base">AIADMK 2026</span>
         </a>
 
         <div className={`hidden md:flex items-center gap-6 ${lang === "ta" ? "h-16" : ""}`}>
@@ -105,7 +105,7 @@ const Navbar = () => {
                     style={{ color: "#de0a26" }}
                   >
                     <span className="flex-shrink-0 text-xl pb-1">⚠️</span>
-                    <span className={`flex items-center ${lang === "ta" ? "h-full" : ""}`}>{l.label}</span>
+                    <span className={`flex items-center max-w-[70px] ${lang === "ta" ? "h-full" : ""}`}>{l.label}</span>
                   </motion.div>
                 ) : (
                   <span className={`flex items-center ${lang === "ta" ? "h-full" : ""}`}>{l.label}</span>
@@ -202,7 +202,7 @@ const Navbar = () => {
                         style={{ color: "#de0a26" }}
                       >
                         <span className="flex-shrink-0 text-xl pb-1">⚠️</span>
-                        <span>{l.label}</span>
+                        <span className="max-w-[70px]">{l.label}</span>
                       </motion.div>
                     ) : (
                       l.label
