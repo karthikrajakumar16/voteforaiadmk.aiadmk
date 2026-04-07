@@ -5,8 +5,6 @@ import {
   updateDoc,
   increment,
   setDoc,
-  getDocs,
-  collection,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
@@ -15,7 +13,7 @@ const STATS_COLLECTION = "stats";
 const DEFAULT_COUNT = 9422;
 
 export const useDownloadCounter = () => {
-  const [count, setCount] = useState(DEFAULT_COUNT);
+  const [count, setCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isFirebaseReady, setIsFirebaseReady] = useState(false);
@@ -23,21 +21,16 @@ export const useDownloadCounter = () => {
   // Subscribe to real-time updates
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
-    let retryTimeout: NodeJS.Timeout | null = null;
 
     const setupListener = async () => {
       try {
-        const docRef = doc(db, STATS_COLLECTION, STATS_DOC);
-
-        // First, try to verify Firestore connection
-        try {
-          const snapshot = await getDocs(collection(db, STATS_COLLECTION));
-          console.log("✅ Firestore connected successfully");
-          setIsFirebaseReady(true);
-        } catch (testErr) {
-          console.warn("⚠️ Firestore connection test failed - using local fallback", testErr);
-          setIsFirebaseReady(false);
+        // Check if Firebase is initialized
+        if (!db) {
+          throw new Error("Firebase Firestore not initialized");
         }
+
+        console.log("🔄 Setting up Firestore listener for downloads counter...");
+        const docRef = doc(db, STATS_COLLECTION, STATS_DOC);
 
         // Set up real-time listener
         unsubscribe = onSnapshot(
@@ -45,82 +38,109 @@ export const useDownloadCounter = () => {
           (snapshot) => {
             if (snapshot.exists()) {
               const data = snapshot.data();
-              const newCount = data.count || DEFAULT_COUNT;
-              console.log("📊 Download count from Firestore:", newCount);
-              setCount(newCount);
-              setIsFirebaseReady(true);
+              const firestoreCount = data?.count;
+              
+              if (typeof firestoreCount === "number") {
+                console.log("✅ Firestore listener: count =", firestoreCount);
+                setCount(firestoreCount);
+                setError(null);
+                setIsFirebaseReady(true);
+              } else {
+                console.warn("⚠️  Firestore document exists but count is invalid:", data);
+                setError("Invalid data in Firestore");
+              }
             } else {
-              // Document doesn't exist, create it with default count
-              console.log("📝 Creating new Firestore document with default count");
+              // Document doesn't exist, create it
+              console.log("📝 Document does not exist. Creating it with default count:", DEFAULT_COUNT);
               initializeCounter();
               setIsFirebaseReady(true);
             }
             setLoading(false);
           },
           (err) => {
-            console.error("❌ Error listening to downloads:", err);
-            setError("Unable to connect to server. Using local counter.");
+            console.error("❌ Firestore error:", err.code, err.message);
+            setError(`Firestore error: ${err.message}`);
             setLoading(false);
             setIsFirebaseReady(false);
-            // Use session storage as fallback
-            const localCount = sessionStorage.getItem("downloadCount");
-            if (localCount) {
-              setCount(parseInt(localCount, 10));
+            
+            // Only set default count on critical errors
+            if (err.code === "permission-denied") {
+              console.error("🚨 Permission denied! Check Firestore security rules");
+            } else if (err.code === "unauthenticated") {
+              console.error("🚨 Authentication required");
             }
           }
         );
       } catch (err) {
-        console.error("Firebase error:", err);
-        setError("Firebase not configured. Check your .env.local file.");
+        console.error("❌ Setup error:", err);
+        setError(err instanceof Error ? err.message : "Failed to setup listener");
         setLoading(false);
         setIsFirebaseReady(false);
-        setCount(DEFAULT_COUNT);
       }
     };
 
     setupListener();
 
     return () => {
-      if (unsubscribe) unsubscribe();
-      if (retryTimeout) clearTimeout(retryTimeout);
+      if (unsubscribe) {
+        console.log("🔌 Unsubscribing from Firestore listener");
+        unsubscribe();
+      }
     };
   }, []);
 
   // Initialize counter if document doesn't exist
   const initializeCounter = async () => {
     try {
+      console.log("📝 Initializing Firestore document with count:", DEFAULT_COUNT);
       const docRef = doc(db, STATS_COLLECTION, STATS_DOC);
-      await setDoc(docRef, { count: DEFAULT_COUNT }, { merge: true });
-      console.log("✅ Counter initialized in Firestore");
+      await setDoc(docRef, { count: DEFAULT_COUNT });
+      console.log("✅ Firestore document created successfully");
+      setCount(DEFAULT_COUNT);
     } catch (err) {
-      console.error("Error initializing counter:", err);
+      console.error("❌ Error initializing counter:", err);
+      setError(err instanceof Error ? err.message : "Failed to initialize counter");
     }
   };
 
   // Increment counter
   const incrementCount = async () => {
     try {
+      if (!isFirebaseReady) {
+        console.warn("⚠️  Firestore not ready, retrying...");
+        // Wait a moment for Firestore to be ready
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+
+      console.log("📤 Incrementing counter in Firestore...");
       const docRef = doc(db, STATS_COLLECTION, STATS_DOC);
+      
       await updateDoc(docRef, {
         count: increment(1),
       });
-      console.log("✅ Counter incremented in Firestore");
+      
+      console.log("✅ Counter incremented successfully");
       return true;
     } catch (err) {
-      console.error("Error incrementing count:", err);
-      setError("Failed to update counter");
+      console.error("❌ Error incrementing count:", err);
       
-      // Fallback: increment locally
-      const newCount = count + 1;
-      setCount(newCount);
-      sessionStorage.setItem("downloadCount", newCount.toString());
+      if (err instanceof Error) {
+        if (err.message.includes("No document")) {
+          console.log("📝 Document not found, creating it...");
+          await initializeCounter();
+        }
+        setError(`Increment failed: ${err.message}`);
+      } else {
+        setError("Failed to increment counter");
+      }
       
       return false;
     }
   };
 
   return {
-    count,
+    count: count ?? DEFAULT_COUNT, // Use default only for initial display
+    actualCount: count, // Raw count from Firestore
     loading,
     error,
     incrementCount,
