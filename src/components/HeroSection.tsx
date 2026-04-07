@@ -59,9 +59,9 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="space-y-6 max-w-3xl mx-auto"
+          className="space-y-12 max-w-3xl mx-auto"
         >
-          <img src={aiadmkLogo} alt="AIADMK Logo" className="w-32 h-20 object-contain mx-auto" />
+          <img src={aiadmkLogo} alt="AIADMK Logo" className="w-32 h-20 object-contain mx-auto mb-4" />
 
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-sm font-medium text-primary">
             {t("சட்டப்பேரவைத் தேர்தல் அதிமுக அறிக்கை - 2026", "AIADMK Assembly Election Manifesto - 2026")}
@@ -101,10 +101,10 @@ const HeroSection = () => {
           </p>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-black leading-tight text-foreground transition-transform duration-300 ease-out transform-gpu hover:scale-105 hover:-translate-y-1">
-            <span className="block mb-3">
+            <span className="block mb-6">
               {t("மக்களைக் காப்போம் —", "Protect the People —")}
             </span>
-            <span className="text-primary block text-5xl sm:text-6xl md:text-5xl lg:text-5xl">
+            <span className="text-primary block text-4.5xl sm:text-6xl md:text-5xl lg:text-5xl">
               {t("தமிழகத்தை மீட்போம்!", "Reclaim Tamil Nadu!")}
             </span>
           </h1>
@@ -119,7 +119,7 @@ const HeroSection = () => {
             {t("எல்லோரும் எல்லாமும் பெறவேண்டும்", "Everyone must receive everything")}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
             <motion.a
               href="#promises"
               whileHover={{ y: -2, scale: 1.02 }}

@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
-import { Menu, X, Download, Globe, AlertTriangle } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Menu, X, Download, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useDownloadCounter } from "@/hooks/use-download-counter";
 import aiadmkLogo from "@/assets/aiadmk-logo.png";
 import tamilManifestoPDF from "@/assets/admk manifesto 2026 ...tamil.pdf";
 import englishManifestoPDF from "@/assets/admk manifesto 2026 ... ENGLISH....pdf";
@@ -10,25 +11,36 @@ import englishManifestoPDF from "@/assets/admk manifesto 2026 ... ENGLISH....pdf
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [downloadCount, setDownloadCount] = useState(9422);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const navRef = useRef<HTMLDivElement>(null);
   const { lang, toggleLang, t } = useLanguage();
+  const { count: downloadCount, incrementCount, error, loading } = useDownloadCounter();
 
   useEffect(() => {
-    // Load download count from localStorage
-    const savedCount = localStorage.getItem("manifestoDownloadCount");
-    if (savedCount) {
-      setDownloadCount(parseInt(savedCount, 10));
-    }
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleDownloadPDF = () => {
-    const manifestoPDF = lang === "ta" ? tamilManifestoPDF : englishManifestoPDF;
-    window.open(manifestoPDF, "_blank");
+  const handleDownloadPDF = async () => {
+    if (isDownloading) return; // Prevent spam clicks
     
-    // Increment and save download count
-    const newCount = downloadCount + 1;
-    setDownloadCount(newCount);
-    localStorage.setItem("manifestoDownloadCount", newCount.toString());
+    setIsDownloading(true);
+    try {
+      const manifestoPDF = lang === "ta" ? tamilManifestoPDF : englishManifestoPDF;
+      window.open(manifestoPDF, "_blank");
+      
+      // Reset loading state immediately after PDF opens
+      setIsDownloading(false);
+      
+      // Increment count in Firestore in background (don't wait)
+      incrementCount().catch((err) => {
+        console.error("Error incrementing count:", err);
+      });
+    } catch (err) {
+      console.error("Error during download:", err);
+      setIsDownloading(false);
+    }
   };
 
   const navLinks = [
@@ -36,7 +48,7 @@ const Navbar = () => {
     { label: t("வாக்குறுதிகள்", "Promises"), href: "#promises" },
     { label: t("துறைவாரி", "Categories"), href: "#categories" },
     { label: t("வேட்பாளர்கள்", "Candidates"), href: "/candidates" },
-    { label: t("DMK கிரிடிசம்", "DMK Criticism"), href: "/dmk-criticism" },
+    { label: t("திமுக கிரிடிசம்", "DMK Criticism"), href: "/dmk-criticism" },
   ];
 
   useEffect(() => {
@@ -45,8 +57,22 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setMobileOpen(false);
+      }
+    };
+
+    if (mobileOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [mobileOpen]);
+
   return (
     <nav
+      ref={navRef}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
           ? "bg-background/95 backdrop-blur-md shadow-sm border-b border-border"
@@ -59,13 +85,13 @@ const Navbar = () => {
           <span className="hidden sm:inline">AIADMK 2026</span>
         </a>
 
-        <div className="hidden md:flex items-center gap-6">
+        <div className={`hidden md:flex items-center gap-6 ${lang === "ta" ? "h-16" : ""}`}>
           {navLinks.map((l) =>
             l.href.startsWith("/") ? (
               <Link
                 key={l.href}
                 to={l.href}
-                className={`text-sm font-medium transition-colors ${
+                className={`text-sm font-medium transition-colors flex items-center h-16 ${lang === "ta" ? "leading-tight" : ""} ${
                   l.href === "/dmk-criticism"
                     ? "font-bold"
                     : "text-foreground/70 hover:text-primary"
@@ -75,21 +101,21 @@ const Navbar = () => {
                   <motion.div
                     animate={{ opacity: [1, 0.3, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
-                    className="flex items-center justify-center gap-1.5"
+                    className={`flex items-center gap-1.5 ${lang === "ta" ? "h-full" : ""}`}
                     style={{ color: "#de0a26" }}
                   >
-                    <AlertTriangle size={20} className="flex-shrink-0" />
-                    <span>{l.label}</span>
+                    <span className="flex-shrink-0 text-xl pb-1">⚠️</span>
+                    <span className={`flex items-center ${lang === "ta" ? "h-full" : ""}`}>{l.label}</span>
                   </motion.div>
                 ) : (
-                  l.label
+                  <span className={`flex items-center ${lang === "ta" ? "h-full" : ""}`}>{l.label}</span>
                 )}
               </Link>
             ) : (
               <a
                 key={l.href}
                 href={l.href}
-                className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors"
+                className={`text-sm font-medium text-foreground/70 hover:text-primary transition-colors flex items-center h-16 ${lang === "ta" ? "leading-tight" : ""}`}
               >
                 {l.label}
               </a>
@@ -99,28 +125,32 @@ const Navbar = () => {
           {/* Language Toggle */}
           <button
             onClick={toggleLang}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-sm font-medium text-foreground/70 hover:text-primary hover:border-primary/30 transition-colors"
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-sm font-medium text-foreground/70 hover:text-primary hover:border-primary/30 transition-colors ${lang === "ta" ? "leading-tight" : ""}`}
           >
             <Globe size={14} />
-            {lang === "ta" ? "EN" : "தமிழ்"}
+            <span className={`${lang === "ta" ? "flex items-center h-5" : ""}`}>{lang === "ta" ? "EN" : "தமிழ்"}</span>
           </button>
 
           {/* Download Button with Count Badge */}
           <div className="flex items-center gap-3">
             <button
               onClick={handleDownloadPDF}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
+              disabled={isDownloading}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${lang === "ta" ? "leading-tight" : ""}`}
+              title={error ? `Error: ${error}` : ""}
             >
-              <Download size={16} />
-              {t("PDF பதிவிறக்கம்", "Download PDF")}
-            </button>
-            <div className="flex flex-col items-center gap-1">
-              <span className="text-primary text-sm font-bold inline-flex items-center gap-1">
-                <Download size={14} />
-                {downloadCount.toLocaleString('en-IN')}
+              <Download size={16} className={isDownloading ? "animate-bounce" : ""} />
+              <span className={`${lang === "ta" ? "flex items-center" : ""}`}>
+                {isDownloading ? t("Downloading...", "Downloading...") : t("PDF பதிவிறக்கம்", "Download PDF")}
               </span>
-              <span className="text-xs text-muted-foreground">
-                {t("பேர் பதிவிறக்கம் செய்தனர்", "People Downloaded")}
+            </button>
+            <div className={`flex flex-col items-center gap-1 ${lang === "ta" ? "leading-tight" : ""}`}>
+              <span className={`text-primary text-sm font-bold inline-flex items-center gap-1 ${lang === "ta" ? "leading-tight" : ""}`}>
+                <Download size={14} />
+                {loading ? "..." : downloadCount.toLocaleString('en-IN')}
+              </span>
+              <span className={`text-xs text-muted-foreground ${lang === "ta" ? "leading-tight" : ""}`}>
+                {error ? t("பிழை", "Error") : t("பேர் பதிவிறக்கம் செய்தனர்", "People Downloaded")}
               </span>
             </div>
           </div>
@@ -168,10 +198,10 @@ const Navbar = () => {
                       <motion.div
                         animate={{ opacity: [1, 0.3, 1] }}
                         transition={{ duration: 2, repeat: Infinity }}
-                        className="flex items-center justify-center gap-1.5"
+                        className="flex items-center justify-start gap-1.5"
                         style={{ color: "#de0a26" }}
                       >
-                        <AlertTriangle size={20} className="flex-shrink-0" />
+                        <span className="flex-shrink-0 text-xl pb-1">⚠️</span>
                         <span>{l.label}</span>
                       </motion.div>
                     ) : (
@@ -189,24 +219,26 @@ const Navbar = () => {
                   </a>
                 )
               )}
-              <div className="flex flex-col gap-2 pt-2">
+              <div className="flex flex-col items-center gap-2 pt-2">
                 <button
                   onClick={() => {
                     handleDownloadPDF();
                     setMobileOpen(false);
                   }}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold w-fit"
+                  disabled={isDownloading}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold w-fit disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={error ? `Error: ${error}` : ""}  
                 >
-                  <Download size={16} />
-                  {t("PDF பதிவிறக்கம்", "Download PDF")}
+                  <Download size={16} className={isDownloading ? "animate-bounce" : ""} />
+                  {isDownloading ? t("பதிவிறக்குதல் நடந்து கொண்டிருக்கிறது...", "Downloading...") : t("PDF பதிவிறக்கம்", "Download PDF")}
                 </button>
                 <div className="flex flex-col items-center gap-1">
                   <span className="text-primary text-xs font-bold inline-flex items-center gap-1">
                     <Download size={12} />
-                    {downloadCount.toLocaleString('en-IN')}
+                    {loading ? "..." : downloadCount.toLocaleString('en-IN')}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {t("பேர் பதிவிறக்கம் செய்தனர்", "People Downloaded")}
+                    {error ? t("பிழை", "Error") : t("பேர் பதிவிறக்கம் செய்தனர்", "People Downloaded")}
                   </span>
                 </div>
               </div>

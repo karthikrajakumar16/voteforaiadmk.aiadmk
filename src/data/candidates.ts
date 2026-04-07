@@ -22,7 +22,7 @@ export const candidates: Candidate[] = [
   { no: 14, district: "தூத்துக்குடி", name: "திரு. கடம்பூர் சி. ராஜு", constituency: "கோவில்பட்டி" },
   { no: 15, district: "மதுரை", name: "திரு. ஆர்.பி. உதயகுமார்", constituency: "திருமங்கலம்" },
   { no: 16, district: "விருதுநகர்", name: "திரு. கே.டி. ராஜேந்திரபாலாஜி", constituency: "சிவகாசி" },
-  { no: 17, district: "சென்னை / திருவள்ளூர்", name: "திரு. பா. பெஞ்சமின்", constituency: "மதுரவாயல்" },
+  { no: 17, district: "சென்னை", name: "திரு. பா. பெஞ்சமின்", constituency: "மதுரவாயல்" },
   { no: 18, district: "திருவண்ணாமலை", name: "திரு. அக்ரி எஸ்.எஸ். கிருஷ்ணமூர்த்தி", constituency: "கலசபாக்கம்" },
   { no: 19, district: "மதுரை", name: "திரு. வி.வி. ராஜன் செல்லப்பா", constituency: "திருப்பரங்குன்றம்" },
   { no: 20, district: "ஈரோடு", name: "திரு. கே.சி. கருப்பணன்", constituency: "பவானி" },
