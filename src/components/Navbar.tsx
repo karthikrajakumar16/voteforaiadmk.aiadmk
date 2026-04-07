@@ -24,15 +24,15 @@ const Navbar = () => {
 
   const handleDownloadPDF = async () => {
     if (isDownloading) return; // Prevent spam clicks
-    
+
     setIsDownloading(true);
     try {
       const manifestoPDF = lang === "ta" ? tamilManifestoPDF : englishManifestoPDF;
       window.open(manifestoPDF, "_blank");
-      
+
       // Reset loading state immediately after PDF opens
       setIsDownloading(false);
-      
+
       // Increment count in Firestore in background (don't wait)
       incrementCount().catch((err) => {
         console.error("Error incrementing count:", err);
@@ -73,11 +73,10 @@ const Navbar = () => {
   return (
     <nav
       ref={navRef}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-background/95 backdrop-blur-md shadow-sm border-b border-border"
-          : "bg-transparent"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+        ? "bg-background/95 backdrop-blur-md shadow-sm border-b border-border"
+        : "bg-transparent"
+        }`}
     >
       <div className="container flex items-center justify-between h-16">
         <a href="#hero" className="flex items-center gap-2 font-bold text-lg text-primary">
@@ -91,11 +90,10 @@ const Navbar = () => {
               <Link
                 key={l.href}
                 to={l.href}
-                className={`text-sm font-medium transition-colors flex items-center h-16 ${lang === "ta" ? "leading-tight" : ""} ${
-                  l.href === "/dmk-criticism"
-                    ? "font-bold"
-                    : "text-foreground/70 hover:text-primary"
-                }`}
+                className={`text-sm font-medium transition-colors flex items-center h-16 ${lang === "ta" ? "leading-tight" : ""} ${l.href === "/dmk-criticism"
+                  ? "font-bold"
+                  : "text-foreground/70 hover:text-primary"
+                  }`}
               >
                 {l.href === "/dmk-criticism" ? (
                   <motion.div
@@ -147,7 +145,9 @@ const Navbar = () => {
             <div className={`flex flex-col items-center gap-1 ${lang === "ta" ? "leading-tight" : ""}`}>
               <span className={`text-primary text-sm font-bold inline-flex items-center gap-1 ${lang === "ta" ? "leading-tight" : ""}`}>
                 <Download size={14} />
-                {loading ? "..." : downloadCount.toLocaleString('en-IN')}
+                {downloadCount !== null
+                  ? downloadCount.toLocaleString('en-IN')
+                  : "..."}
               </span>
               <span className={`text-xs text-muted-foreground ${lang === "ta" ? "leading-tight" : ""}`}>
                 {error ? t("பிழை", "Error") : t("பேர் பதிவிறக்கம் செய்தனர்", "People Downloaded")}
@@ -187,11 +187,10 @@ const Navbar = () => {
                   <Link
                     key={l.href}
                     to={l.href}
-                    className={`text-sm font-medium py-2 transition-colors ${
-                      l.href === "/dmk-criticism"
-                        ? "font-bold"
-                        : "text-foreground/70 hover:text-primary"
-                    }`}
+                    className={`text-sm font-medium py-2 transition-colors ${l.href === "/dmk-criticism"
+                      ? "font-bold"
+                      : "text-foreground/70 hover:text-primary"
+                      }`}
                     onClick={() => setMobileOpen(false)}
                   >
                     {l.href === "/dmk-criticism" ? (
@@ -227,7 +226,7 @@ const Navbar = () => {
                   }}
                   disabled={isDownloading}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold w-fit disabled:opacity-50 disabled:cursor-not-allowed"
-                  title={error ? `Error: ${error}` : ""}  
+                  title={error ? `Error: ${error}` : ""}
                 >
                   <Download size={16} className={isDownloading ? "animate-bounce" : ""} />
                   {isDownloading ? t("பதிவிறக்குதல் நடந்து கொண்டிருக்கிறது...", "Downloading...") : t("PDF பதிவிறக்கம்", "Download PDF")}
@@ -235,7 +234,9 @@ const Navbar = () => {
                 <div className="flex flex-col items-center gap-1">
                   <span className="text-primary text-xs font-bold inline-flex items-center gap-1">
                     <Download size={12} />
-                    {loading ? "..." : downloadCount.toLocaleString('en-IN')}
+                    {downloadCount !== null
+                      ? downloadCount.toLocaleString('en-IN')
+                      : "..."}
                   </span>
                   <span className="text-xs text-muted-foreground">
                     {error ? t("பிழை", "Error") : t("பேர் பதிவிறக்கம் செய்தனர்", "People Downloaded")}
